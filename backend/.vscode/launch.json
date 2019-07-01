@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - WebApplication",
+            "request": "launch",
+            "mainClass": "com.bit.web.WebApplication",
+            "projectName": "web"
+        }
+    ]
+}
