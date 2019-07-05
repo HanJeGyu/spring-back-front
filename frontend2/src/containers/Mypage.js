@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 
-class Header extends Component{
+class Mypage extends Component{
     render(){
         return (
             <div>
-                <h2>헤더</h2>
+                <h2>Mypage</h2>
             </div>
         )
     }
 }
 
-export default Header
+export default Mypage
