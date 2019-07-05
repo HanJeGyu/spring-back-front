@@ -1,15 +1,16 @@
 package com.bit.web.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.bit.web.common.util.PageProxy;
+import com.bit.web.common.lambda.ISupplier;
 import com.bit.web.common.util.Printer;
 import com.bit.web.domain.CustomerDTO;
 import com.bit.web.entities.Customer;
+import com.bit.web.repositories.CustomerRepository;
 import com.bit.web.service.CustomerService;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,9 +30,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
         
     @Autowired CustomerService customerService;
-    @Autowired CustomerDTO customer;
-    @Autowired PageProxy pxy;
-    @Autowired Printer p;
+	@Autowired CustomerDTO customer;
+	@Autowired CustomerRepository repo;
+	@Autowired Printer p;
+	@Autowired ModelMapper modelMapper;
 
     @GetMapping("/count")
     public long count(){
@@ -88,9 +90,20 @@ public class CustomerController {
     
     @PostMapping("")
 	public HashMap<String, String> save(@RequestBody CustomerDTO dto){
+		Customer entity = Customer.builder()
+									.customerId(dto.getCustomerId())
+									.customerName(dto.getCustomerName())
+									.password(dto.getPassword())
+									.ssn(dto.getSsn())
+									.phone(dto.getPhone())
+									.city(dto.getCity())
+									.address(dto.getAddress())
+									.postalcode(dto.getPostalcode())
+									.photo(dto.getPhoto())
+									.build();
+		repo.save(entity);
 		HashMap<String, String> map = new HashMap<>();
-/* 		Customer entity = modelMapper.map(dto, Customer.class); */
-		customerService.save(dto);
+		//customerService.save(dto);
 		map.put("result", "SUCCESS");
 		return map;
 	}
@@ -101,22 +114,37 @@ public class CustomerController {
 		return null;
 	} */
 
-/* 	@GetMapping("/login")
-	public HashMap<String, String> login(@RequestBody CustomerDTO dto){
+/* 	@GetMapping("/login/{id}/{pwd}")
+	public HashMap<String, String> login(@PathVariable String id, @PathVariable String pwd){
 		System.out.println("컨트롤러 진입");
 		HashMap<String, String> map = new HashMap<>();
-		if(customerService.login(dto) != null){
+		if(customerService.login(id, pwd) != null){
 			map.put("result", "SUCCESS");
 		}else{
 			map.put("result", "FALSE");
 		}
-		System.out.println("컨트롤러 아웃");
 		return map;
 	} */
-	@GetMapping("/login")
-	public String login(@RequestBody CustomerDTO dto){
-		System.out.println("컨트롤러 진입");
-		System.out.println(dto);
-		return "1";
+/* 	@GetMapping("/login/{id}/{pwd}")
+	public CustomerDTO login(@PathVariable String id, @PathVariable String pwd){
+
+		System.out.println("로그인 ID : " + id);
+		System.out.println("로그인 PWD : " + pwd);
+		ISupplier su = ()->{
+			return repo.findByCustomerIdAndPassword(id, pwd);
+		};
+		return (CustomerDTO)su.get();
+	} */
+
+	@PostMapping("/login")
+	public CustomerDTO login(@RequestBody CustomerDTO dto){
+		System.out.println("로그인 ID : " + dto.getCustomerId());
+		System.out.println("로그인 PWD : " + dto.getPassword());
+		ISupplier su = ()->{
+			return repo.findByCustomerIdAndPassword(dto.getCustomerId(), dto.getPassword());
+		};
+		modelMapper.map(su.get(), CustomerDTO.class);
+		
+		return (CustomerDTO)su.get();
 	}
 }

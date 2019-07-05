@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityNotFoundException;
-
 import com.bit.web.domain.CustomerDTO;
 import com.bit.web.entities.Customer;
 import com.bit.web.repositories.CustomerRepository;
@@ -13,7 +11,6 @@ import com.bit.web.repositories.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.BeanUtils;
 
 /**
  * CustomerService
@@ -82,10 +79,19 @@ public class CustomerService {
 	}
 	
 	public void save(CustomerDTO dto){
-		System.out.println("save 호출전 ID :" + dto.getCustomerId());
-		System.out.println("save 호출전 NAME :" + dto.getCustomerName());
-		Customer entity = modelMapper.map(dto, Customer.class);
-		System.out.println("엔티티 변환" + entity);
+/* 		Customer entity = modelMapper.map(dto, Customer.class);
+		System.out.println("엔티티 변환" + entity); */
+		Customer entity = Customer.builder()
+									.customerId(dto.getCustomerId())
+									.customerName(dto.getCustomerName())
+									.password(dto.getPassword())
+									.ssn(dto.getSsn())
+									.phone(dto.getPhone())
+									.city(dto.getCity())
+									.address(dto.getAddress())
+									.postalcode(dto.getPostalcode())
+									.photo(dto.getPhoto())
+									.build();
 		customerRepository.save(entity);
 	}
 	
@@ -93,11 +99,8 @@ public class CustomerService {
 		return customerRepository.saveAll(entities);
 	}
 
-	public CustomerDTO login(CustomerDTO dto){
-		Optional<Customer> oCustomer = customerRepository.findByCustomerId(dto.getCustomerId());
-		customerDTO = modelMapper.map(oCustomer.get(), CustomerDTO.class);
-		//Customer entity = modelMapper.map(dto, Customer.class);
-		//customerRepository.login(entity);
+	public CustomerDTO login(String customerId, String password){
+		//customerDTO = modelMapper.map(customerRepository.findByCustomerIdAndPassword(customerId, password), CustomerDTO.class);
 		return customerDTO;
 	}
 }

@@ -3,8 +3,8 @@
   <Nav></Nav>
   <form>
     <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="text" class="form-control" id="loingId" placeholder="Enter id" v-model="loingId">
+      <label for="ID">ID:</label>
+      <input type="text" class="form-control" id="loginId" placeholder="Enter id" v-model="loginId">
     </div>
     <div class="form-group">
       <label for="pwd">Password:</label>
@@ -20,6 +20,7 @@
     <button @click="findByCustomerId" class="btn btn-default">findByCustomerId</button>
     <button @click="save" class="btn btn-default">save</button>
     <button @click="login" class="btn btn-default">login</button>
+    <button @click="loginpost" class="btn btn-default">loginpost</button>
   </form>
   <Footer></Footer>
 </div>
@@ -34,7 +35,7 @@ export default {
   data(){
     return {
       context: 'http://localhost:9000/customers',
-      emailId: '',
+      loginId: '',
       pwd: '',
       id: '32',
       customerId: 'han',
@@ -95,7 +96,6 @@ export default {
     },
     save(){
       let data = {
-        id: this.id,
         customerId: this.customerId,
         customerName: this.customerName,
         password: this.password,
@@ -112,23 +112,32 @@ export default {
       }
       axios.post(`${this.context}`, JSON.stringify(data), {headers: headers})
       .then(res=>{
-        alert(`GET SUCCESS : ${res.data}`)
+        alert(`GET SUCCESS : ${res.data.result}`)
       }).catch(e=>{
         alert('ERROR')
       })
     },
     login(){
+      axios.get(`${this.context}/login/haha/1234`)
+      .then(res=>{
+        alert(`GET SUCCESS : ${res.data.customerId}`)
+      }).catch(e=>{
+        alert('ERROR')
+      })
+    },
+    loginpost(){
       let data = {
-        customerId: 'haha',
-        password: '1234'
+        customerId: this.loginId,
+        password: this.pwd
       }
       let headers = {
         'Content-Type': 'application/json',
         'Authorization': 'JWT fefege..'
       }
-      axios.get(`${this.context}/login`, JSON.stringify(data), {headers: headers})
+      alert(`ID : ${this.loginId}  pass : ${this.pwd}`)
+      axios.post(`${this.context}/login`, JSON.stringify(data), {headers: headers})
       .then(res=>{
-        alert(`GET SUCCESS : ${res.data}`)
+        alert(`GET SUCCESS \nID : ${res.data.customerId}\nNAME : ${res.data.customerName}`)
       }).catch(e=>{
         alert('ERROR')
       })

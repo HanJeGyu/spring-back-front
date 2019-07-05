@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CustomerRepository extends CrudRepository<Customer, Long>{
-    public Optional<Customer> findByCustomerId (String customerId);
-    public void deleteById (String customerId);
+    public Optional<Customer> findByCustomerId(String customerId);
+    public void deleteById(String customerId);
+    public Customer findByCustomerIdAndPassword(String customerId, String password);
 }
